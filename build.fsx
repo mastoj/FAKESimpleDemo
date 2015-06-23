@@ -17,8 +17,8 @@ let testProjects = !! "src/**/*.Tests.csproj"
 
 Target "Build" (fun() ->
   trace "Building again!"
-  projects |>
-  MSBuildRelease buildDir "ResolveReferences;_CopyWebApplication"
+  projects
+  |> MSBuildRelease buildDir "ResolveReferences;_CopyWebApplication"
   |> ignore
 )
 
