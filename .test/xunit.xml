@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies>
+  <assembly name="C:\dev\git\FAKESimpleDemo\.test\FAKESimple.Lib.Tests.DLL" environment="64-bit .NET 4.0.30319.0 [collection-per-class, non-parallel]" test-framework="xUnit.net 2.0.0.2929" run-date="2015-06-23" run-time="22:59:23" config-file="C:\dev\git\FAKESimpleDemo\src\packages\xunit.runner.console.2.0.0\tools\xunit.console.exe.Config" total="1" passed="1" failed="0" skipped="0" time="0.126" errors="0">
+    <errors />
+    <collection total="1" passed="1" failed="0" skipped="0" name="Test collection for FAKESimple.Lib.Tests.CalculatorTest" time="0.022">
+      <test name="FAKESimple.Lib.Tests.CalculatorTest.AddTest" type="FAKESimple.Lib.Tests.CalculatorTest" method="AddTest" time="0.0224719" result="Pass" />
+    </collection>
+  </assembly>
+</assemblies>
