@@ -11,16 +11,16 @@ let testDir = "./.test/"
 
 Target "Clean" (fun() ->
   trace "Cleaing your world!"
-  CleanDirs [buildDir; deployDir]
+  CleanDirs [buildDir; deployDir; testDir]
 )
 
-let projects = !! "src/FAKESimple.Web/*.csproj" -- "src/**/*.Tests.csproj"
+let projects = !! "src/**/*.csproj" -- "src/**/*.Tests.csproj"
 let testProjects = !! "src/**/*.Tests.csproj"
 
 Target "Build" (fun() ->
   trace "Building again!"
   projects
-  |> MSBuildRelease buildDir "ResolveReferences;_CopyWebApplication"
+  |> MSBuildRelease buildDir "ResolveReferences;Build"
   |> ignore
 )
 
