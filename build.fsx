@@ -8,14 +8,20 @@ let buildDir = "./.build/"
 let packagingDir = buildDir + "_PublishedWebsites/FAKESimple.Web"
 let deployDir = "./.deploy/"
 let testDir = "./.test/"
+let projects = !! "src/**/*.csproj" -- "src/**/*.Tests.csproj"
+let testProjects = !! "src/**/*.Tests.csproj"
+let packages = !! "./**/packages.config"
 
 Target "Clean" (fun() ->
   trace "Cleaing your world!"
   CleanDirs [buildDir; deployDir; testDir]
 )
 
-let projects = !! "src/**/*.csproj" -- "src/**/*.Tests.csproj"
-let testProjects = !! "src/**/*.Tests.csproj"
+
+Target "RestorePackages" (fun _ ->
+  packages
+  |> Seq.iter (RestorePackage (fun p -> {p with OutputPath = "./src/packages"}))
+)
 
 Target "Build" (fun() ->
   trace "Building again!"
@@ -75,6 +81,7 @@ Target "Default" (fun _ ->
 )
 
 "Clean"
+==> "RestorePackages"
 ==> "Build"
 ==> "BuildTest"
 ==> "Test"
