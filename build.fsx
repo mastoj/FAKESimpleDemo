@@ -2,6 +2,7 @@
 #r @"packages/FAKE/tools/FakeLib.dll"
 open Fake
 open Fake.Testing
+open Fake.AppVeyor
 open Fake.NuGetHelper
 open System.IO
 
@@ -56,6 +57,8 @@ Target "Test" (fun() ->
               HtmlOutputPath = Some (testDir @@ "xunit.html");
               XmlOutputPath = Some (testDir @@ "xunit.xml");
           })
+
+  UploadTestResultsXml TestResultsType.Xunit (testDir @@ "xunit.xml")
 )
 
 // Default target
