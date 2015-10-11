@@ -57,15 +57,7 @@ Target "Test" (fun() ->
               HtmlOutputPath = Some (testDir @@ "xunit.html");
               XmlOutputPath = Some (testDir @@ "xunit.xml");
           })
-)
-
-Target "CopyTestResult" (fun _ ->
-    try
-      trace "Tests done, trying to push result"
-      UploadTestResultsXml TestResultsType.Xunit testDir
-    with
-    | ex ->
-      trace (sprintf "Something went wrong with copy test result: %s" (ex.Message))
+  UploadTestResultsXml TestResultsType.Xunit testDir
 )
 
 // Default target
@@ -106,7 +98,6 @@ Target "Default" (fun _ ->
 ==> "Build"
 ==> "BuildTest"
 ==> "Test"
-=?> ("CopyTestResult", (buildServer = BuildServer.AppVeyor))
 ==> "Default"
 ==> "Package"
 ==> "Web"
