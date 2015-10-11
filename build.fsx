@@ -6,7 +6,7 @@ open Fake.NuGetHelper
 open System.IO
 
 let buildDir = "./.build/"
-let packagingDir = buildDir + "_PublishedWebsites/FAKESimple.Web"
+let packagingDir = buildDir + "FAKESimple.Web/_PublishedWebsites/FAKESimple.Web"
 let deployDir = "./.deploy/"
 let testDir = "./.test/"
 let projects = !! "src/**/*.csproj" -- "src/**/*.Tests.csproj"
