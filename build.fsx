@@ -3,6 +3,7 @@
 open Fake
 open Fake.Testing
 open Fake.NuGetHelper
+open System.IO
 
 let buildDir = "./.build/"
 let packagingDir = buildDir + "_PublishedWebsites/FAKESimple.Web"
@@ -11,6 +12,15 @@ let testDir = "./.test/"
 let projects = !! "src/**/*.csproj" -- "src/**/*.Tests.csproj"
 let testProjects = !! "src/**/*.Tests.csproj"
 let packages = !! "./**/packages.config"
+
+let getOutputDir proj =
+  let folderName = Directory.GetParent(proj).Name
+  sprintf "%s%s/" buildDir folderName
+
+let build proj =
+  let outputDir = proj |> getOutputDir
+  MSBuildRelease outputDir "ResolveReferences;Build" [proj] |> ignore
+
 
 Target "Clean" (fun() ->
   trace "Cleaing your world!"
@@ -25,9 +35,9 @@ Target "RestorePackages" (fun _ ->
 
 Target "Build" (fun() ->
   trace "Building again!"
+
   projects
-  |> MSBuildRelease buildDir "ResolveReferences;Build"
-  |> ignore
+  |> Seq.iter build
 )
 
 Target "BuildTest" (fun() ->
@@ -88,18 +98,5 @@ Target "Default" (fun _ ->
 ==> "Default"
 ==> "Package"
 ==> "Web"
-
-Target "A" (fun _ -> trace "This is A")
-Target "B" (fun _ -> trace "This is B")
-Target "C" (fun _ -> trace "This is C")
-Target "D" (fun _ -> trace "This is D")
-Target "E" (fun _ -> trace "This is E")
-
-"A"
-  ==> "B"
-    ==> "C"
-  ==> "D"
-    ==> "E"
-
 // start build
-RunTargetOrDefault "Default"
+RunTargetOrDefault "Build"
