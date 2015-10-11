@@ -72,7 +72,8 @@ Target "Web" (fun _ ->
 Target "Package" (fun _ ->
   trace "Packing the web"
   let versionCandidate = (environVar "version")
-  let version = if versionCandidate = "" || versionCandidate = null then "0.0.0" else versionCandidate
+  let buildCandidate = (environVar "APPVEYOR_BUILD_NUMBER")
+  let version = if buildCandidate = "" || buildCandidate = null then "1.0.0" else (sprintf "1.0.0.%s" buildCandidate)
   NuGet (fun p ->
         {p with
             Authors = ["Tomas Jansson"]
