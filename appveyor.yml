@@ -1,5 +1,5 @@
 assembly_info:
   patch: false
 build_script:
-  build.cmd
+  build.cmd Test
 test: off
