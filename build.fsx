@@ -57,8 +57,6 @@ Target "Test" (fun() ->
               HtmlOutputPath = Some (testDir @@ "xunit.html");
               XmlOutputPath = Some (testDir @@ "xunit.xml");
           })
-  UploadTestResultsXml TestResultsType.Xunit testDir
-  trace "Uploaded test results"
 )
 
 // Default target
