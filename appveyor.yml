@@ -5,3 +5,5 @@ assembly_info:
 build_script:
   build.cmd Package
 test: off
+after_build:
+  - ps: Get-ChildItem .\.deploy\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
