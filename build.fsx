@@ -62,7 +62,7 @@ Target "Test" (fun() ->
 Target "CopyTestResult" (fun _ ->
     try
       trace "Tests done, trying to push result"
-      UploadTestResultsXml TestResultsType.Xunit (testDir @@ "xunit.xml")
+      UploadTestResultsXml TestResultsType.Xunit testDir
     with
     | ex ->
       trace (sprintf "Something went wrong with copy test result: %s" (ex.Message))
