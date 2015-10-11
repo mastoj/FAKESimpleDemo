@@ -8,7 +8,7 @@ namespace FAKESimple.Lib.Tests
         public void AddTest()
         {
             var actual = Calculator.Add(1, 3);
-            Assert.Equal(5, actual);
+            Assert.Equal(4, actual);
         }
     }
 }
