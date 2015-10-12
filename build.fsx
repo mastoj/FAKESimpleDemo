@@ -22,12 +22,10 @@ let build proj =
   let outputDir = proj |> getOutputDir
   MSBuildRelease outputDir "ResolveReferences;Build" [proj] |> ignore
 
-
 Target "Clean" (fun() ->
   trace "Cleaing your world!"
   CleanDirs [buildDir; deployDir; testDir]
 )
-
 
 Target "RestorePackages" (fun _ ->
   packages
@@ -78,7 +76,7 @@ Target "Package" (fun _ ->
   NuGet (fun p ->
         {p with
             Authors = ["Tomas Jansson"]
-            Project = "FAKESimple.Demo"
+            Project = "FAKESimple.Web"
             Description = "Demoing FAKE"
             OutputPath = deployDir
             Summary = "Does this work"
@@ -88,8 +86,24 @@ Target "Package" (fun _ ->
             (packagingDir + "/FAKESimple.Web.nuspec")
 )
 
-Target "Default" (fun _ ->
-    trace "Building default"
+let execOnAppveyor arguments =
+  let result =
+    ExecProcess (fun info ->
+      info.FileName <- "appveyor"
+      info.Arguments <- arguments
+      ) (System.TimeSpan.FromMinutes 2.0)
+  if result <> 0 then failwith (sprintf "Failed to execute appveyor command: %s" arguments)
+  trace "Published packages"
+
+let publishOnAppveyor folder =
+  !! (folder + "*.nupkg")
+  |> Seq.iter (fun artifact -> execOnAppveyor (sprintf "PushArtifact %s" artifact))
+
+Target "Publish" (fun _ ->
+  match buildServer with
+  | BuildServer.AppVeyor ->
+      publishOnAppveyor deployDir
+  | _ -> ()
 )
 
 "Clean"
@@ -97,8 +111,8 @@ Target "Default" (fun _ ->
 ==> "Build"
 ==> "BuildTest"
 ==> "Test"
-==> "Default"
 ==> "Package"
+==> "Publish"
 ==> "Web"
 // start build
 RunTargetOrDefault "Build"

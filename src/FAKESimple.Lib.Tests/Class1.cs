@@ -15,7 +15,7 @@ namespace FAKESimple.Lib.Tests
         public void SubFailTest()
         {
             var actual = Calculator.Sub(1, 3);
-            Assert.Equal(89, actual);
+            Assert.Equal(-2, actual);
         }
     }
 }

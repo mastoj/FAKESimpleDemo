@@ -3,7 +3,5 @@ environment:
 assembly_info:
   patch: false
 build_script:
-  build.cmd Package
+  build.cmd Publish
 test: off
-after_build:
-  - ps: Get-ChildItem .\.deploy\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
