@@ -133,6 +133,11 @@ Target "Deploy" (fun _ ->
   executeOcto deploy
 )
 
+Target "Default" (fun _ ->
+  trace "Done"
+  ()
+)
+
 "Clean"
 ==> "RestorePackages"
 ==> "Build"
