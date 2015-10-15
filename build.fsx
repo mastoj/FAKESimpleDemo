@@ -4,6 +4,7 @@ open Fake
 open Fake.Testing
 open Fake.AppVeyor
 open Fake.NuGetHelper
+open Fake.OctoTools
 open System.IO
 
 let buildDir = "./.build/"
@@ -68,11 +69,13 @@ Target "Web" (fun _ ->
   trace "Hello World from FAKE"
 )
 
+let getVersion() =
+  let buildCandidate = (environVar "APPVEYOR_BUILD_NUMBER")
+  if buildCandidate = "" || buildCandidate = null then "1.0.0" else (sprintf "1.0.0.%s" buildCandidate)
+
 Target "Package" (fun _ ->
   trace "Packing the web"
-  let versionCandidate = (environVar "version")
-  let buildCandidate = (environVar "APPVEYOR_BUILD_NUMBER")
-  let version = if buildCandidate = "" || buildCandidate = null then "1.0.0" else (sprintf "1.0.0.%s" buildCandidate)
+  let version = getVersion()
   NuGet (fun p ->
         {p with
             Authors = ["Tomas Jansson"]
@@ -106,6 +109,30 @@ Target "Publish" (fun _ ->
   | _ -> ()
 )
 
+
+let executeOcto command =
+  let serverName = environVar "OCTO_SERVER"
+  let apiKey = environVar "OCTO_KEY"
+  let server = { Server = serverName; ApiKey = apiKey }
+  Octo (fun octoParams ->
+      { octoParams with
+          ToolPath = "./packages/octopustools"
+          Server   = server
+          Command  = command }
+  )
+
+Target "Create release" (fun _ ->
+  let version = getVersion()
+  let release = CreateRelease({ releaseOptions with Project = "FAKESimple.Web"; Version = version }, None)
+  executeOcto release
+)
+
+Target "Deploy" (fun _ ->
+  let version = getVersion()
+  let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = version})
+  executeOcto deploy
+)
+
 "Clean"
 ==> "RestorePackages"
 ==> "Build"
@@ -113,6 +140,10 @@ Target "Publish" (fun _ ->
 ==> "Test"
 ==> "Package"
 ==> "Publish"
+==> "Create release"
+==> "Deploy"
+==> "Default"
 ==> "Web"
 // start build
 RunTargetOrDefault "Build"
+//New-AzurePublicIpAddress -Name connecttointernet -ResourceGroupName FakeAppveyorDemo -DomainNameLabel "fakeocto" -Location "North Europe" -AllocationMethod Dynamic

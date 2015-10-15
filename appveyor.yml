@@ -3,5 +3,5 @@ environment:
 assembly_info:
   patch: false
 build_script:
-  build.cmd Publish
+  build.cmd Default
 test: off
