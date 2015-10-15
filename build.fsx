@@ -129,7 +129,7 @@ Target "Create release" (fun _ ->
 
 Target "Deploy" (fun _ ->
   let version = getVersion()
-  let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = version})
+  let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = version; DeployTo = "Prod"})
   executeOcto deploy
 )
 
@@ -149,6 +149,12 @@ Target "Default" (fun _ ->
 ==> "Deploy"
 ==> "Default"
 ==> "Web"
+
+Target "TryOcto" (fun _ ->
+  let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = "1.0.0.23"})
+  executeOcto deploy
+)
+
 // start build
 RunTargetOrDefault "Build"
 //New-AzurePublicIpAddress -Name connecttointernet -ResourceGroupName FakeAppveyorDemo -DomainNameLabel "fakeocto" -Location "North Europe" -AllocationMethod Dynamic
