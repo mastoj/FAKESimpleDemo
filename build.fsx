@@ -60,12 +60,20 @@ Target "Test" (fun() ->
 
 // Default target
 Target "Web" (fun _ ->
-  let result =
+  let result2 =
           ExecProcess (fun info ->
-              info.FileName <- "node.exe"
-              info.Arguments <- "build.js"
+              info.FileName <- "npm.cmd"
+              info.Arguments <- "install ./src/FAKESimple.Web/"
+              info.WorkingDirectory <- "."
           ) (System.TimeSpan.FromMinutes 1.0)
-  if result <> 0 then failwith "Operation failed or timed out"
+  if result2 <> 0 then failwith "Operation failed or timed out"
+  let result1 =
+          ExecProcess (fun info ->
+              info.FileName <- "npm.cmd"
+              info.Arguments <- "app:js"
+              info.WorkingDirectory <- "src/FAKESimple.Web"
+          ) (System.TimeSpan.FromMinutes 1.0)
+  if result1 <> 0 then failwith "Operation failed or timed out"
   trace "Hello World from FAKE"
 )
 
@@ -138,7 +146,8 @@ Target "Default" (fun _ ->
   ()
 )
 
-"Clean"
+"Web"
+==> "Clean"
 ==> "RestorePackages"
 ==> "Build"
 ==> "BuildTest"
@@ -148,7 +157,6 @@ Target "Default" (fun _ ->
 ==> "Create release"
 ==> "Deploy"
 ==> "Default"
-==> "Web"
 
 Target "TryOcto" (fun _ ->
   let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = "1.0.0.23"})
