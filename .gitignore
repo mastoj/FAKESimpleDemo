@@ -118,3 +118,4 @@ MetricResults/
 *.sln.ide/
 
 _configs/
+.fake/

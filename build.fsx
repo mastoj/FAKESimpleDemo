@@ -7,6 +7,48 @@ open Fake.NuGetHelper
 open Fake.OctoTools
 open System.IO
 
+module Npm =
+  open System
+
+  type NpmCommand =
+    | Install of string
+
+  type NpmParams = {
+    Src: string
+    ToolPath: string
+    WorkingDirectory: string
+    Command: NpmCommand
+    Timeout: TimeSpan
+  }
+
+  let npmParams = {
+    Src = "";
+    ToolPath = "";
+    Command = (Install "");
+    WorkingDirectory = ".";
+    Timeout = TimeSpan.MaxValue
+  }
+
+  let parse command =
+    match command with
+    | Install str -> sprintf "install %s" str
+
+  let run npmParams =
+    let npmPath = npmParams.ToolPath @@ "npm.cmd"
+    let arguments = npmParams.Command |> parse
+    let result = ExecProcess (
+                  fun info ->
+                    info.FileName <- npmPath
+                    info.WorkingDirectory <- npmParams.WorkingDirectory
+                    info.Arguments <- arguments
+                  ) npmParams.Timeout
+    if result <> 0 then failwith (sprintf "'npm %s' failed" arguments)
+
+  let Npm f =
+    npmParams |> f |> run
+
+open Npm
+
 let buildDir = "./.build/"
 let packagingDir = buildDir + "FAKESimple.Web/_PublishedWebsites/FAKESimple.Web"
 let deployDir = "./.deploy/"
@@ -60,20 +102,20 @@ Target "Test" (fun() ->
 
 // Default target
 Target "Web" (fun _ ->
-  let result2 =
-          ExecProcess (fun info ->
-              info.FileName <- "npm.cmd"
-              info.Arguments <- "install ./src/FAKESimple.Web/"
-              info.WorkingDirectory <- "."
-          ) (System.TimeSpan.FromMinutes 1.0)
-  if result2 <> 0 then failwith "Operation failed or timed out"
-  let result1 =
-          ExecProcess (fun info ->
-              info.FileName <- "npm.cmd"
-              info.Arguments <- "app:js"
-              info.WorkingDirectory <- "src/FAKESimple.Web"
-          ) (System.TimeSpan.FromMinutes 1.0)
-  if result1 <> 0 then failwith "Operation failed or timed out"
+  Npm (fun p ->
+    { p with
+        Command = (Install "")
+        ToolPath = "C:/Program Files/nodejs/"
+        WorkingDirectory = "./src/FAKESimple.Web/"
+    })
+
+//  let result =
+//          ExecProcess (fun info ->
+//              info.FileName <- "npm.cmd"
+//              info.Arguments <- "install ./src/FAKESimple.Web/"
+//              info.WorkingDirectory <- "."
+//          ) (System.TimeSpan.FromMinutes 1.0)
+//  if result <> 0 then failwith "Operation failed or timed out"
   trace "Hello World from FAKE"
 )
 
