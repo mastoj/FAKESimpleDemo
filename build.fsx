@@ -11,7 +11,8 @@ module Npm =
   open System
 
   type NpmCommand =
-    | Install of string
+    | Install
+    | Run of string
 
   type NpmParams = {
     Src: string
@@ -24,14 +25,15 @@ module Npm =
   let npmParams = {
     Src = "";
     ToolPath = "";
-    Command = (Install "");
+    Command = Install;
     WorkingDirectory = ".";
     Timeout = TimeSpan.MaxValue
   }
 
   let parse command =
     match command with
-    | Install str -> sprintf "install %s" str
+    | Install -> sprintf "install"
+    | Run str -> sprintf "run %s" str
 
   let run npmParams =
     let npmPath = npmParams.ToolPath @@ "npm.cmd"
@@ -104,18 +106,18 @@ Target "Test" (fun() ->
 Target "Web" (fun _ ->
   Npm (fun p ->
     { p with
-        Command = (Install "")
+        Command = Install
         ToolPath = "C:/Program Files/nodejs/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
 
-//  let result =
-//          ExecProcess (fun info ->
-//              info.FileName <- "npm.cmd"
-//              info.Arguments <- "install ./src/FAKESimple.Web/"
-//              info.WorkingDirectory <- "."
-//          ) (System.TimeSpan.FromMinutes 1.0)
-//  if result <> 0 then failwith "Operation failed or timed out"
+  Npm (fun p ->
+    { p with
+        Command = (Run "build")
+        ToolPath = "C:/Program Files/nodejs/"
+        WorkingDirectory = "./src/FAKESimple.Web/"
+    })
+
   trace "Hello World from FAKE"
 )
 
