@@ -44,7 +44,7 @@ module Npm =
     | Run str -> sprintf "run %s" str
 
   let run npmParams =
-    let npmPath = npmParams.ToolPath @@ "npm.cmd"
+    let npmPath = Path.GetFullPath(npmParams.ToolPath @@ "npm.cmd")
     let arguments = npmParams.Command |> parse
     let result = ExecProcess (
                   fun info ->
@@ -115,14 +115,14 @@ Target "Web" (fun _ ->
   Npm (fun p ->
     { p with
         Command = Install Forced
-        ToolPath = "C:/Program Files/nodejs/"
+        ToolPath = "./packages/Npm.js/tools/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
 
   Npm (fun p ->
     { p with
         Command = (Run "build")
-        ToolPath = "C:/Program Files/nodejs/"
+        ToolPath = "./packages/Npm.js/tools/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
 
