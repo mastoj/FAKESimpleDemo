@@ -10,8 +10,12 @@ open System.IO
 module Npm =
   open System
 
+  type InstallArgs =
+    | Standard
+    | Forced
+
   type NpmCommand =
-    | Install
+    | Install of InstallArgs
     | Run of string
 
   type NpmParams = {
@@ -23,16 +27,20 @@ module Npm =
   }
 
   let npmParams = {
-    Src = "";
-    ToolPath = "";
-    Command = Install;
-    WorkingDirectory = ".";
+    Src = ""
+    ToolPath = ""
+    Command = Install Standard
+    WorkingDirectory = "."
     Timeout = TimeSpan.MaxValue
   }
 
+  let parseInsallArgs = function
+    | Standard -> ""
+    | Forced -> " --force"
+
   let parse command =
     match command with
-    | Install -> sprintf "install"
+    | Install installArgs -> sprintf "install%s" (installArgs |> parseInsallArgs)
     | Run str -> sprintf "run %s" str
 
   let run npmParams =
@@ -106,7 +114,7 @@ Target "Test" (fun() ->
 Target "Web" (fun _ ->
   Npm (fun p ->
     { p with
-        Command = Install
+        Command = Install Forced
         ToolPath = "C:/Program Files/nodejs/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
