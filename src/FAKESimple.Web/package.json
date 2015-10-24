@@ -3,7 +3,7 @@
   "name": "FAKESimple.Web",
   "private": true,
   "scripts": {
-    "build": "gulp"
+    "build": "gulp js:app"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
