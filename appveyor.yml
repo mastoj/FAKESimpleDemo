@@ -6,4 +6,4 @@ build_script:
   build.cmd Default
 test: off
 install:
-    - ps: Install-Product node
+    - ps: Install-Product node x64
