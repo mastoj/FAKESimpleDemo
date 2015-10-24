@@ -114,7 +114,7 @@ Target "Test" (fun() ->
 Target "Web" (fun _ ->
   Npm (fun p ->
     { p with
-        Command = Install Forced
+        Command = Install Standard
         ToolPath = "./packages/Npm.js/tools/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
@@ -127,6 +127,12 @@ Target "Web" (fun _ ->
     })
 
   trace "Hello World from FAKE"
+)
+
+Target "CopyWeb" (fun _ ->
+  let targetDir = packagingDir @@ "dist"
+  let sourceDir = "./src/FAKESimple.Web/dist"
+  CopyDir targetDir sourceDir (fun x -> true)
 )
 
 let getVersion() =
@@ -169,7 +175,6 @@ Target "Publish" (fun _ ->
   | _ -> ()
 )
 
-
 let executeOcto command =
   let serverName = environVar "OCTO_SERVER"
   let apiKey = environVar "OCTO_KEY"
@@ -189,7 +194,12 @@ Target "Create release" (fun _ ->
 
 Target "Deploy" (fun _ ->
   let version = getVersion()
-  let deploy = DeployRelease({deployOptions with Project = "FAKESimple.Web"; Version = version; DeployTo = "Prod"})
+  let deploy = DeployRelease(
+                { deployOptions with
+                    Project = "FAKESimple.Web"
+                    Version = version
+                    DeployTo = "Prod"
+                    WaitForDeployment = true})
   executeOcto deploy
 )
 
@@ -198,10 +208,11 @@ Target "Default" (fun _ ->
   ()
 )
 
-"Web"
-==> "Clean"
+"Clean"
 ==> "RestorePackages"
 ==> "Build"
+==> "Web"
+==> "CopyWeb"
 ==> "BuildTest"
 ==> "Test"
 ==> "Package"
