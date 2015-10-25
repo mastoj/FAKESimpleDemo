@@ -10,6 +10,11 @@ open System.IO
 module Npm =
   open System
 
+  let npmFileName =
+    match isUnix with
+      | true -> "/usr/local/bin/npm"
+      | _ -> "./packages/Npm.js/tools/npm.cmd"
+
   type InstallArgs =
     | Standard
     | Forced
@@ -20,7 +25,7 @@ module Npm =
 
   type NpmParams = {
     Src: string
-    ToolPath: string
+    NpmFilePath: string
     WorkingDirectory: string
     Command: NpmCommand
     Timeout: TimeSpan
@@ -28,7 +33,7 @@ module Npm =
 
   let npmParams = {
     Src = ""
-    ToolPath = ""
+    NpmFilePath = npmFileName
     Command = Install Standard
     WorkingDirectory = "."
     Timeout = TimeSpan.MaxValue
@@ -44,7 +49,7 @@ module Npm =
     | Run str -> sprintf "run %s" str
 
   let run npmParams =
-    let npmPath = Path.GetFullPath(npmParams.ToolPath @@ "npm.cmd")
+    let npmPath = Path.GetFullPath(npmParams.NpmFilePath)
     let arguments = npmParams.Command |> parse
     let result = ExecProcess (
                   fun info ->
@@ -115,14 +120,12 @@ Target "Web" (fun _ ->
   Npm (fun p ->
     { p with
         Command = Install Standard
-        ToolPath = "./packages/Npm.js/tools/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
 
   Npm (fun p ->
     { p with
         Command = (Run "build")
-        ToolPath = "./packages/Npm.js/tools/"
         WorkingDirectory = "./src/FAKESimple.Web/"
     })
 
