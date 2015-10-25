@@ -92,7 +92,7 @@ module AppVeyorHelpers =
     |> Seq.iter (fun artifact -> execOnAppveyor (sprintf "PushArtifact %s" artifact))
 
 [<AutoOpen>]
-module Helpers =
+module Settings =
   let buildDir = "./.build/"
   let packagingDir = buildDir + "FAKESimple.Web/_PublishedWebsites/FAKESimple.Web"
   let deployDir = "./.deploy/"
