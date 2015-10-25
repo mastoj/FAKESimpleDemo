@@ -222,4 +222,4 @@ module Targets =
 ==> "Deploy"
 ==> "Default"
 
-RunTargetOrDefault "Build"
+RunTargetOrDefault "Default"
